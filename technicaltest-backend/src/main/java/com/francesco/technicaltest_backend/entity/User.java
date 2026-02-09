@@ -38,6 +38,7 @@ public class User {
     @Column(name = "username")
     private String username;
 
+    // Inizializzato di default a 100
     @Column(name = "wallet")
     private int wallet = 100;
 

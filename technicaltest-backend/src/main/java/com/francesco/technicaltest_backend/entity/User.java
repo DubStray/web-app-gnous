@@ -39,7 +39,7 @@ public class User {
     private String username;
 
     @Column(name = "wallet")
-    private int wallet;
+    private int wallet = 100;
 
     @Column(name = "created_at")
     @CreatedDate

@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:18
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/18/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-gnous_test_db}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d gnous_test_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  technicaltest-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src:/app/src
+      - ./target/classes:/app/target/classes
+      - ./pom.xml:/app/pom.xml
+      - ./mvnw:/app/mvnw
+      - ./.mvn:/app/.mvn
+    environment:
+      SPRING_DEVTOOLS_RESTART_ENABLED: "true"
+      SPRING_DEVTOOLS_LIVERELOAD_ENABLED: "true"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-gnous_test_db}
+    command: ./mvnw spring-boot:run
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata:

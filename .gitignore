@@ -78,3 +78,9 @@ yarn-error.log*
 ### OS ###
 .DS_Store
 Thumbs.db
+
+### DB ###
+*.db
+*.sqlite
+*.sqlite3
+gnous_test_db

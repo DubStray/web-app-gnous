@@ -3,12 +3,14 @@ package com.francesco.technicaltest_backend.entity;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.francesco.technicaltest_backend.entity.enums.TaskPriority;
 import com.francesco.technicaltest_backend.entity.enums.TaskStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +21,8 @@ import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import jakarta.persistence.Table;
 
 /**
  * Entitá Task che rappresenta un task del sistema, con questi attributi:
@@ -33,7 +37,9 @@ import lombok.NoArgsConstructor;
  * @author Francesco
  */
 @Entity
+@Table(name = "tasks")
 @Data
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @AllArgsConstructor
 public class Task {

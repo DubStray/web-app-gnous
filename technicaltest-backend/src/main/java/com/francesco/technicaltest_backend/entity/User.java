@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,6 +16,8 @@ import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import jakarta.persistence.Table;
 
 /**
  * Entitá User che rappresenta un utente del sistema, con questi attributi:
@@ -26,7 +30,9 @@ import lombok.NoArgsConstructor;
  * @author Francesco
  */
 @Entity
+@Table(name = "users")
 @Data
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
@@ -38,9 +44,8 @@ public class User {
     @Column(name = "username")
     private String username;
 
-    // Inizializzato di default a 100
     @Column(name = "wallet")
-    private int wallet = 100;
+    private int wallet;
 
     @Column(name = "created_at")
     @CreatedDate

@@ -49,21 +49,21 @@ public class Task {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
     @Column(name = "description")
     private String description;
 
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private TaskStatus status = TaskStatus.TODO;
 
-    @Column(name = "priority")
+    @Column(name = "priority", nullable = false)
     @Enumerated(EnumType.STRING)
     private TaskPriority priority = TaskPriority.MEDIUM;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
     private LocalDateTime createdAt;
 

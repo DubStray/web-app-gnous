@@ -6,7 +6,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import com.francesco.technicaltest_backend.dtos.CreateTaskDTO;
 import com.francesco.technicaltest_backend.dtos.TaskDTO;
+import com.francesco.technicaltest_backend.dtos.UpdateTaskDTO;
 import com.francesco.technicaltest_backend.entity.Task;
 
 /**
@@ -16,11 +18,12 @@ import com.francesco.technicaltest_backend.entity.Task;
 public interface TaskMapper {
 
     @Mapping(target = "createdAt", ignore = true)
-    Task toEntity(TaskDTO taskDTO);
+    @Mapping(target = "id", ignore = true)
+    Task toEntity(CreateTaskDTO createTaskDTO);
 
     TaskDTO toTaskDTO(Task task);
 
     List<TaskDTO> toTaskDTOList(List<Task> tasks);
 
-    void updateTaskFromDTO(TaskDTO taskDTO, @MappingTarget Task task);
+    void updateTaskFromDTO(UpdateTaskDTO updateTaskDTO, @MappingTarget Task task);
 }

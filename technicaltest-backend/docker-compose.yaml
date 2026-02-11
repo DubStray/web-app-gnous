@@ -25,8 +25,6 @@ services:
       - ./src:/app/src
       - ./target/classes:/app/target/classes
       - ./pom.xml:/app/pom.xml
-      - ./mvnw:/app/mvnw
-      - ./.mvn:/app/.mvn
     environment:
       SPRING_DEVTOOLS_RESTART_ENABLED: "true"
       SPRING_DEVTOOLS_LIVERELOAD_ENABLED: "true"

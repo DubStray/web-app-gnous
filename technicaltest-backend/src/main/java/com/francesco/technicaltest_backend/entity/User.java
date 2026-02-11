@@ -50,7 +50,4 @@ public class User {
     @Column(name = "created_at")
     @CreatedDate
     private LocalDateTime createdAt;
-
-    @OneToMany(mappedBy = "user")
-    private List<Task> tasks;
 }

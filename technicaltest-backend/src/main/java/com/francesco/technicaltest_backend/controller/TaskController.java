@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.francesco.technicaltest_backend.dtos.CreateTaskDTO;
 import com.francesco.technicaltest_backend.dtos.TaskDTO;
 import com.francesco.technicaltest_backend.dtos.UpdateTaskDTO;
+import com.francesco.technicaltest_backend.dtos.UpdateTaskStatusDTO;
 import com.francesco.technicaltest_backend.service.TaskService;
 
 import jakarta.validation.Valid;
@@ -52,6 +54,11 @@ public class TaskController {
     @PutMapping("/{id}")
     public ResponseEntity<TaskDTO> updateTask(@PathVariable Long id, @RequestBody @Valid UpdateTaskDTO updateTaskDTO) {
         return ResponseEntity.ok(this.taskService.updateTask(id, updateTaskDTO));
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<TaskDTO> updateTaskStatus(@PathVariable Long id, @RequestBody @Valid UpdateTaskStatusDTO updateTaskStatusDTO) {
+        return ResponseEntity.ok(this.taskService.updateTaskStatus(id, updateTaskStatusDTO));
     }
 
     @DeleteMapping("/{id}")

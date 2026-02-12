@@ -48,10 +48,17 @@ Questo metodo avvia sia il database PostgreSQL che il servizio Backend in contai
    docker compose up --build
    ```
 
-> **Nota**:
+> **ATTENZIONE: CONNESSIONE AL DATABASE**
 >
-> - Il Backend sarà accessibile a `http://localhost:8080`
-> - Il Database PostgreSQL sarà accessibile esternamente a `localhost:5433` (user: `postgres`, password: `postgres`, db: `gnous_test_db`)
+> Il Database PostgreSQL esposto da Docker utilizza la porta **5433** (e NON la standard 5432) per evitare conflitti con eventuali istanze locali.
+>
+> **Per connettersi con client esterni (DBeaver, pgAdmin, IntelliJ, ecc.):**
+>
+> - **Host**: `localhost`
+> - **Porta**: `5433`
+> - **Database**: `gnous_test_db`
+> - **User**: `postgres`
+> - **Password**: `postgres`
 
 ### Variabili d'Ambiente (Backend)
 

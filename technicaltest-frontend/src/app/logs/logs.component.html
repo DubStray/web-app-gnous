@@ -1,0 +1,54 @@
+<div class="card p-4">
+  <div class="header mb-4">
+    <h2>Audit Logs</h2>
+    <div class="filter-container">
+      <label for="eventTypeFilter">Filter by Type:</label>
+      <select
+        id="eventTypeFilter"
+        class="form-control"
+        [(ngModel)]="selectedEventType"
+        (change)="onFilterChange()"
+      >
+        @for (eventType of eventTypes; track eventType.value) {
+          <option [value]="eventType.value">{{ eventType.label }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Event Type</th>
+          <th>Timestamp</th>
+          <th>Description</th>
+          <th>Wallet Delta</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (logs().length === 0) {
+          <tr>
+            <td colspan="4" class="text-center">No logs found</td>
+          </tr>
+        }
+        @for (log of logs(); track log.timestamp) {
+          <tr>
+            <td>
+              <span class="badge" [ngClass]="getEventClass(log.eventType)">
+                {{ log.eventType }}
+              </span>
+            </td>
+            <td>{{ log.timestamp | date: 'short' }}</td>
+            <td>{{ log.payload }}</td>
+            <td>
+              <span class="font-semibold" [ngClass]="getWalletDeltaClass(log.walletDelta)">
+                {{ log.walletDelta > 0 ? '+' : '' }}{{ log.walletDelta }}
+              </span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+<div class="card p-4">
+  <div class="header mb-4">
+    <h2>Wallet History</h2>
+  </div>
+
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>Description</th>
+          <th>Amount</th>
+          <th>Balance After</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (transactions().length === 0) {
+          <tr>
+            <td colspan="4" class="text-center">No transactions found</td>
+          </tr>
+        }
+        @for (transaction of transactions(); track transaction.timestamp) {
+          <tr>
+            <td>{{ transaction.timestamp | date: 'short' }}</td>
+            <td>{{ transaction.description }}</td>
+            <td>
+              <span
+                class="font-semibold"
+                [class]="
+                  transaction.amount > 0
+                    ? 'text-green-600'
+                    : transaction.amount < 0
+                      ? 'text-red-600'
+                      : 'text-gray-500'
+                "
+              >
+                {{ transaction.amount > 0 ? '+' : '' }}{{ transaction.amount }}
+              </span>
+            </td>
+            <td class="font-semibold">{{ transaction.balanceAfter }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

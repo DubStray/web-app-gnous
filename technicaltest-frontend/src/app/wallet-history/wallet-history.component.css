@@ -1,0 +1,86 @@
+.card {
+  background-color: #1f2937;
+  color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.p-4 {
+  padding: 1.5rem;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.header h2 {
+  color: #60a5fa;
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.table-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #374151;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #111827;
+}
+
+.data-table thead {
+  background-color: #1f2937;
+  border-bottom: 2px solid #374151;
+}
+
+.data-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #60a5fa;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.data-table tbody tr {
+  border-bottom: 1px solid #374151;
+  transition: background-color 0.2s;
+}
+
+.data-table tbody tr:hover {
+  background-color: #1f2937;
+}
+
+.data-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.data-table td {
+  padding: 1rem;
+  color: #e5e7eb;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.text-green-600 {
+  color: #10b981;
+}
+
+.text-red-600 {
+  color: #ef4444;
+}
+
+.text-gray-500 {
+  color: #6b7280;
+}

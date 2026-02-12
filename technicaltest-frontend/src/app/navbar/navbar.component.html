@@ -1,0 +1,42 @@
+<div class="card">
+  <p-toolbar>
+    <ng-template pTemplate="start">
+      <div class="app-title">
+        <i class="pi pi-check-circle" style="font-size: 1.5rem; margin-right: 10px"></i>
+        <span class="font-bold">Task Management App</span>
+      </div>
+
+      <div class="mx-3 text-300">|</div>
+
+      <div class="wallet-info flex align-items-center">
+        <i class="pi pi-wallet mr-2 text-primary"></i>
+        <span class="font-semibold text-white">Wallet: {{ walletBalance() }}</span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="center"> </ng-template>
+
+    <ng-template pTemplate="end">
+      <div class="flex gap-2">
+        <p-button
+          label="Home"
+          icon="pi pi-home"
+          styleClass="p-button-text"
+          routerLink="/"
+        ></p-button>
+        <p-button
+          label="Wallet History"
+          icon="pi pi-wallet"
+          styleClass="p-button-text"
+          routerLink="/wallet-history"
+        ></p-button>
+        <p-button
+          label="Logs"
+          icon="pi pi-list"
+          styleClass="p-button-text"
+          routerLink="/logs"
+        ></p-button>
+      </div>
+    </ng-template>
+  </p-toolbar>
+</div>

@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.francesco.technicaltest_backend.entity.Task;
+
 import com.francesco.technicaltest_backend.entity.WalletTransaction;
 
 /**
@@ -16,4 +18,6 @@ public interface WalletRepository extends JpaRepository<WalletTransaction, Long>
 
     // Trova l'ultima transazione
     WalletTransaction findTopByOrderByCreatedAtDesc();
+
+    List<WalletTransaction> findByTask(Task task);
 }

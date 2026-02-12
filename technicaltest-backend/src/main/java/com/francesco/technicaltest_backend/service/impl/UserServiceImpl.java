@@ -53,9 +53,6 @@ public class UserServiceImpl implements UserService {
         // Mappo l'utente in entità
         User user = this.userMapper.toEntity(userDTO);
 
-        // Setto il wallet a 100
-        user.setWallet(100);
-
         // Salvo l'utente
         return this.userMapper.toUserDTO(this.userRepository.save(user));
     }

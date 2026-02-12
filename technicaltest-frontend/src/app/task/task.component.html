@@ -1,0 +1,177 @@
+<div class="card p-4">
+  <div class="header mb-4">
+    <h2>Task List</h2>
+    <button class="btn btn-primary" (click)="openCreateDialog()">
+      <span class="icon">+</span> New Task
+    </button>
+  </div>
+
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (tasks().length === 0) {
+          <tr>
+            <td colspan="6" class="text-center">No tasks found</td>
+          </tr>
+        }
+        @for (task of tasks(); track task.id) {
+          <tr>
+            <td>{{ task.id }}</td>
+            <td class="font-bold">{{ task.title }}</td>
+            <td>{{ task.description }}</td>
+            <td>
+              <span class="badge" [ngClass]="getPriorityClass(task.priority)">
+                {{ task.priority }}
+              </span>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="getStatusClass(task.status)">
+                {{ task.status }}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons">
+                <button class="btn btn-sm btn-warning" (click)="openStatusDialog(task)">
+                  Change Status
+                </button>
+                <button class="btn btn-sm btn-info" (click)="openEditDialog(task)">Update</button>
+                <button class="btn btn-sm btn-danger" (click)="deleteTask(task)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+@if (editDialogVisible()) {
+  <div class="create-modal-wrapper">
+    <div class="create-modal-bg" (click)="editDialogVisible.set(false)"></div>
+    <div class="create-modal-content">
+      <div class="create-modal-header">
+        <h3>Edit Task</h3>
+        <button type="button" class="create-close-btn" (click)="editDialogVisible.set(false)">
+          &times;
+        </button>
+      </div>
+      <div class="create-modal-body">
+        <div class="create-form-field">
+          <label for="edit-title">Title</label>
+          <input type="text" id="edit-title" [(ngModel)]="editedTask.title" />
+        </div>
+        <div class="create-form-field">
+          <label for="edit-desc">Description</label>
+          <textarea id="edit-desc" rows="3" [(ngModel)]="editedTask.description"></textarea>
+        </div>
+        <div class="create-form-field">
+          <label for="edit-priority">Priority</label>
+          <select id="edit-priority" [(ngModel)]="editedTask.priority">
+            @for (option of priorityOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="create-modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="editDialogVisible.set(false)">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="saveTask()">Save</button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (statusDialogVisible()) {
+  <div class="create-modal-wrapper">
+    <div class="create-modal-bg" (click)="statusDialogVisible.set(false)"></div>
+    <div class="create-modal-content" style="max-width: 400px">
+      <div class="create-modal-header">
+        <h3>Change Status</h3>
+        <button type="button" class="create-close-btn" (click)="statusDialogVisible.set(false)">
+          &times;
+        </button>
+      </div>
+      <div class="create-modal-body">
+        <p>
+          Current Status: <span class="font-bold">{{ taskToUpdateStatus()?.status }}</span>
+        </p>
+        <div class="create-form-field">
+          <label for="new-status">New Status</label>
+          <select id="new-status" [(ngModel)]="newStatus">
+            @for (option of statusOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="create-modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="statusDialogVisible.set(false)">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="confirmStatusChange()">
+          Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+@if (createDialogVisible()) {
+  <div class="create-modal-wrapper">
+    <div class="create-modal-bg" (click)="createDialogVisible.set(false)"></div>
+    <div class="create-modal-content">
+      <div class="create-modal-header">
+        <h3>New Task</h3>
+        <button type="button" class="create-close-btn" (click)="createDialogVisible.set(false)">
+          &times;
+        </button>
+      </div>
+      <div class="create-modal-body">
+        <div class="create-form-field">
+          <label for="create-title">Title</label>
+          <input
+            type="text"
+            id="create-title"
+            [(ngModel)]="newTask.title"
+            placeholder="Task Title"
+          />
+        </div>
+        <div class="create-form-field">
+          <label for="create-desc">Description</label>
+          <textarea
+            id="create-desc"
+            rows="3"
+            [(ngModel)]="newTask.description"
+            placeholder="Task Description"
+          ></textarea>
+        </div>
+        <div class="create-form-field">
+          <label for="create-priority">Priority</label>
+          <select id="create-priority" [(ngModel)]="newTask.priority">
+            @for (option of priorityOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+      <div class="create-modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="createDialogVisible.set(false)">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" (click)="saveNewTask()">Create</button>
+      </div>
+    </div>
+  </div>
+}

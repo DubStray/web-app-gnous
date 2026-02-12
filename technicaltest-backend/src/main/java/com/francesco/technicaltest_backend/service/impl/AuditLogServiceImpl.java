@@ -53,4 +53,13 @@ public class AuditLogServiceImpl implements AuditLogService {
         return this.mapper.toDTOs(this.auditRepository.findByEventType(eventType));
     }
 
+    // Setta il task a null per tutti i log associati a una task specifica
+    @Override
+    @Transactional
+    public void detachFromTask(Task task) {
+        List<AuditLog> logs = this.auditRepository.findByTask(task);
+        logs.forEach(log -> log.setTask(null));
+        this.auditRepository.saveAll(logs);
+    }
+
 }

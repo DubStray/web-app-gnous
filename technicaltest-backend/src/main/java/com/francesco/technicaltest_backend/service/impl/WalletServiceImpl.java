@@ -137,4 +137,11 @@ public class WalletServiceImpl implements WalletService {
         return TASK_DELETION_REFUND;
     }
 
+    @Override
+    @Transactional
+    public void detachFromTask(Task task) {
+        List<WalletTransaction> transactions = this.walletRepository.findByTask(task);
+        transactions.forEach(t -> t.setTask(null));
+        this.walletRepository.saveAll(transactions);
+    }
 }

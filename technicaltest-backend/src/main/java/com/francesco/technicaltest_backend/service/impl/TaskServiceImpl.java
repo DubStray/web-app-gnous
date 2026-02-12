@@ -11,6 +11,7 @@ import com.francesco.technicaltest_backend.dtos.UpdateTaskDTO;
 import com.francesco.technicaltest_backend.dtos.UpdateTaskStatusDTO;
 import com.francesco.technicaltest_backend.dtos.mapper.TaskMapper;
 import com.francesco.technicaltest_backend.entity.enums.AuditLogEventType;
+import com.francesco.technicaltest_backend.entity.enums.TaskStatus;
 import com.francesco.technicaltest_backend.exception.task.TaskExceptions.TaskNotFoundException;
 import com.francesco.technicaltest_backend.repository.TaskRepository;
 import com.francesco.technicaltest_backend.service.AuditLogService;
@@ -101,13 +102,25 @@ public class TaskServiceImpl implements TaskService {
     public TaskDTO updateTaskStatus(Long id, UpdateTaskStatusDTO updateTaskStatusDTO) {
         Task task = this.taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
 
+        TaskStatus oldStatus = task.getStatus();
         this.taskMapper.updateTaskStatusFromDTO(updateTaskStatusDTO, task);
 
         TaskDTO updatedTask = this.taskMapper.toTaskDTO(this.taskRepository.save(task));
 
+        if (updatedTask.getStatus() == TaskStatus.DONE && oldStatus != TaskStatus.DONE) {
+            walletService.credit(2, task, "Completed Task: " + updatedTask.getTitle());
+
+            auditLogService.logEvent(
+                AuditLogEventType.WALLET_CREDIT, 
+                "Task completed | Credit: " + updatedTask.getTitle(), 
+                task, 
+                2);
+        }
+
         auditLogService.logEvent(
             AuditLogEventType.TASK_STATUS_CHANGED, 
-            "Task status changed: " + updatedTask.getStatus(), 
+            "Task status changed: " + updatedTask.getStatus() +
+            "Old status: " + oldStatus,
             task, 
             0);
 
@@ -118,13 +131,21 @@ public class TaskServiceImpl implements TaskService {
     public void deleteTask(Long id) {
         Task task =  this.taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
 
+        // Sgancia i log associati prima della cancellazione fisica
+        auditLogService.detachFromTask(task);
+        walletService.detachFromTask(task);
+
+        if (task.getStatus() != TaskStatus.DONE) {
+            walletService.credit(walletService.getTaskDeletionRefund(), null, "Refund for task deletion: " + task.getTitle());
+        }
+
         this.taskRepository.delete(task);
 
         auditLogService.logEvent(
             AuditLogEventType.TASK_DELETED, 
             "Task deleted: " + task.getTitle(), 
-            task, 
-            0);
+            null, 
+            1);
     }
 
 }

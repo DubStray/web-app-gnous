@@ -29,4 +29,7 @@ public interface WalletService {
     Integer getTaskCompletionReward();
 
     Integer getTaskDeletionRefund();
+
+    // Metodo per sgangiare le transazioni da una task (per il delete)
+    void detachFromTask(Task task);
 }

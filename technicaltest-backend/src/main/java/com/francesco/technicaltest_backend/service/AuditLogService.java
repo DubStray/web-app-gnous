@@ -17,4 +17,6 @@ public interface AuditLogService {
     List<AuditLogDTO> getAllLogs();
 
     List<AuditLogDTO> getLogsByType(AuditLogEventType eventType);
+
+    void detachFromTask(Task task);
 }

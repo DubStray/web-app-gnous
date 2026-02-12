@@ -88,7 +88,7 @@ public class WalletServiceImpl implements WalletService {
             AuditLogEventType.WALLET_DEBIT, 
             description, 
             task, 
-            newBalance);;
+            -amount);
     }
 
     // Metodo per incrementare il wallet
@@ -112,7 +112,7 @@ public class WalletServiceImpl implements WalletService {
             AuditLogEventType.WALLET_CREDIT, 
             description, 
             task, 
-            newBalance);
+            amount);
     }
 
     @Override

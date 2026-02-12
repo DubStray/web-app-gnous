@@ -67,12 +67,12 @@ public class TaskServiceImpl implements TaskService {
         // Registra l'evento di audit
         auditLogService.logEvent(
             AuditLogEventType.TASK_CREATED, 
-            "Task created: " + savedTask.getTitle() +
-            " with priority: " + savedTask.getPriority() +
-            " with description: " + savedTask.getDescription() +
-            " with status: " + savedTask.getStatus(),
+            "TASK [CREATED]: " + savedTask.getTitle() +
+            " -- PRIORITY: " + savedTask.getPriority() +
+            " -- DESCRIPTION: " + savedTask.getDescription() +
+            " -- STATUS: " + savedTask.getStatus(),
             savedTask, 
-            walletService.getTaskCost()
+            0
         );
         
         return this.taskMapper.toTaskDTO(savedTask);
@@ -88,10 +88,10 @@ public class TaskServiceImpl implements TaskService {
 
         auditLogService.logEvent(
             AuditLogEventType.TASK_UPDATED, 
-            "Task updated: " + updatedTask.getTitle() +
-            " with status: " + updatedTask.getStatus() +
-            " with priority: " + updatedTask.getPriority() +
-            " with description: " + updatedTask.getDescription(),
+            "TASK [UPDATED]: " + updatedTask.getTitle() +
+            " -- STATUS: " + updatedTask.getStatus() +
+            " -- PRIORITY: " + updatedTask.getPriority() +
+            " -- DESCRIPTION: " + updatedTask.getDescription(),
             task, 
             0);
 
@@ -112,15 +112,15 @@ public class TaskServiceImpl implements TaskService {
 
             auditLogService.logEvent(
                 AuditLogEventType.WALLET_CREDIT, 
-                "Task completed | Credit: " + updatedTask.getTitle(), 
+                "TASK [COMPLETED]: " + updatedTask.getTitle(), 
                 task, 
                 2);
         }
 
         auditLogService.logEvent(
             AuditLogEventType.TASK_STATUS_CHANGED, 
-            "Task status changed: " + updatedTask.getStatus() +
-            "Old status: " + oldStatus,
+            "TASK [STATUS CHANGED]: " + updatedTask.getStatus() +
+            " -- OLD STATUS: " + oldStatus,
             task, 
             0);
 
@@ -143,7 +143,7 @@ public class TaskServiceImpl implements TaskService {
 
         auditLogService.logEvent(
             AuditLogEventType.TASK_DELETED, 
-            "Task deleted: " + task.getTitle(), 
+            "TASK [DELETED]: " + task.getTitle(), 
             null, 
             1);
     }

@@ -5,13 +5,14 @@ import { Observable } from 'rxjs';
 import { TaskService } from '../services/task.service';
 import { WalletService } from '../services/wallet.service';
 import { Task, TaskStatus, UpdateTaskStatus, UpdateTask, TaskPriority } from '../models/models';
+import { SelectModule } from 'primeng/select';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-task',
   standalone: true,
-  imports: [CommonModule, FormsModule, ToastModule],
+  imports: [CommonModule, FormsModule, ToastModule, SelectModule],
   providers: [MessageService],
   templateUrl: './task.component.html',
   styleUrl: './task.component.css',
@@ -21,12 +22,27 @@ export class TaskComponent implements OnInit {
   currentPage = signal(1);
   pageSize = signal(10);
 
-  paginatedTasks = computed(() => {
-    const startIndex = (this.currentPage() - 1) * this.pageSize();
-    return this.tasks().slice(startIndex, startIndex + this.pageSize());
+
+  selectedStatus = signal<TaskStatus | 'ALL'>('ALL');
+  selectedPriority = signal<TaskPriority | 'ALL'>('ALL');
+
+  filteredTasks = computed(() => {
+    const status = this.selectedStatus();
+    const priority = this.selectedPriority();
+
+    return this.tasks().filter((t) => {
+      const statusMatch = status === 'ALL' || t.status === status;
+      const priorityMatch = priority === 'ALL' || t.priority === priority;
+      return statusMatch && priorityMatch;
+    });
   });
 
-  totalPages = computed(() => Math.ceil(this.tasks().length / this.pageSize()));
+  paginatedTasks = computed(() => {
+    const startIndex = (this.currentPage() - 1) * this.pageSize();
+    return this.filteredTasks().slice(startIndex, startIndex + this.pageSize());
+  });
+
+  totalPages = computed(() => Math.ceil(this.filteredTasks().length / this.pageSize()));
 
   nextPage() {
     if (this.currentPage() < this.totalPages()) {
@@ -62,11 +78,25 @@ export class TaskComponent implements OnInit {
     { label: 'DONE', value: TaskStatus.DONE },
   ];
 
+  filterStatusOptions = [
+    { label: 'All', value: 'ALL' },
+    ...this.statusOptions,
+  ];
+
   priorityOptions = [
     { label: 'LOW', value: 'LOW' },
     { label: 'MEDIUM', value: 'MEDIUM' },
     { label: 'HIGH', value: 'HIGH' },
   ];
+
+  filterPriorityOptions = [
+    { label: 'All', value: 'ALL' },
+    ...this.priorityOptions,
+  ];
+
+  onFilterChange() {
+    this.currentPage.set(1);
+  }
 
   private taskService = inject(TaskService);
   private walletService = inject(WalletService);

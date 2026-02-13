@@ -1,9 +1,24 @@
 <div class="card p-4">
-  <div class="header mb-4 flex justify-between items-center">
-    <h2>Task List</h2>
-    <button class="btn btn-primary" (click)="openCreateDialog()">
-      <span class="icon">+</span> New Task
-    </button>
+  <div class="header mb-4">
+    <div class="header-inner-left">
+      <h2>Task List</h2>
+      <div class="filter-group">
+        <span class="filter-label">Status:</span>
+        <p-select [options]="filterStatusOptions" [(ngModel)]="selectedStatus" optionLabel="label" optionValue="value"
+          placeholder="Filter by Status" (onChange)="onFilterChange()" [style]="{'min-width': '10rem'}" />
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Priority:</span>
+        <p-select [options]="filterPriorityOptions" [(ngModel)]="selectedPriority" optionLabel="label"
+          optionValue="value" placeholder="Filter by Priority" (onChange)="onFilterChange()"
+          [style]="{'min-width': '10rem'}" />
+      </div>
+    </div>
+    <div class="header-inner-right">
+      <button class="btn btn-primary" (click)="openCreateDialog()">
+        <span class="icon">+</span> New Task
+      </button>
+    </div>
   </div>
 
   <div class="table-container">

@@ -24,6 +24,31 @@
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
+  white-space: nowrap;
+}
+
+.header-inner-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.filter-label {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.header-inner-right {
+  display: flex;
+  align-items: center;
 }
 
 .table-container {

@@ -130,12 +130,6 @@ public class TaskServiceImpl implements TaskService {
 
         if (rewardTriggered) {
             walletService.credit(2, task, "Completed Task: " + updatedTask.getTitle());
-
-            auditLogService.logEvent(
-                    AuditLogEventType.WALLET_CREDIT,
-                    "TASK [COMPLETED]: " + updatedTask.getTitle(),
-                    task,
-                    2);
         }
 
         auditLogService.logEvent(

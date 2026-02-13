@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TaskService } from '../services/task.service';
@@ -14,6 +14,27 @@ import { Task, TaskStatus, UpdateTaskStatus, UpdateTask, TaskPriority } from '..
 })
 export class TaskComponent implements OnInit {
   tasks = signal<Task[]>([]);
+  currentPage = signal(1);
+  pageSize = signal(10);
+
+  paginatedTasks = computed(() => {
+    const startIndex = (this.currentPage() - 1) * this.pageSize();
+    return this.tasks().slice(startIndex, startIndex + this.pageSize());
+  });
+
+  totalPages = computed(() => Math.ceil(this.tasks().length / this.pageSize()));
+
+  nextPage() {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update((p) => p + 1);
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage() > 1) {
+      this.currentPage.update((p) => p - 1);
+    }
+  }
 
   editDialogVisible = signal(false);
   selectedTask = signal<Task | null>(null);
@@ -46,46 +67,71 @@ export class TaskComponent implements OnInit {
   }
 
   currentSort: 'STATUS' | 'PRIORITY' | 'DATE' | null = null;
+  isAscending = true;
 
   loadTasks() {
     this.taskService.getAllTasks().subscribe({
       next: (data) => {
         this.tasks.set(data);
         this.currentSort = null;
+        this.currentPage.set(1);
       },
       error: (err) => console.error('Error loading tasks', err),
     });
   }
 
   orderByStatus() {
-    this.taskService.getTasksByStatus().subscribe({
-      next: (data) => {
-        this.tasks.set(data);
-        this.currentSort = 'STATUS';
-      },
-      error: (err) => console.error('Error ordering by status', err),
-    });
+    if (this.currentSort === 'STATUS') {
+      this.tasks.update((tasks) => [...tasks].reverse());
+      this.isAscending = !this.isAscending;
+    } else {
+      this.taskService.getAllTasksOrderedByStatus().subscribe({
+        next: (data) => {
+          this.tasks.set(data);
+          this.currentSort = 'STATUS';
+          this.isAscending = true;
+          this.currentPage.set(1);
+        },
+        error: (err) => console.error('Error ordering by status', err),
+      });
+    }
   }
 
   orderByPriority() {
-    this.taskService.getTasksByPriority().subscribe({
-      next: (data) => {
-        this.tasks.set(data);
-        this.currentSort = 'PRIORITY';
-      },
-      error: (err) => console.error('Error ordering by priority', err),
-    });
+    if (this.currentSort === 'PRIORITY') {
+      this.tasks.update((tasks) => [...tasks].reverse());
+      this.isAscending = !this.isAscending;
+    } else {
+      this.taskService.getAllTasksOrderedByPriority().subscribe({
+        next: (data) => {
+          this.tasks.set(data);
+          this.currentSort = 'PRIORITY';
+          this.isAscending = true;
+          this.currentPage.set(1);
+        },
+        error: (err) => console.error('Error ordering by priority', err),
+      });
+    }
   }
 
   orderByDate() {
-    this.taskService.getTasksByDate().subscribe({
-      next: (data) => {
-        this.tasks.set(data);
-        this.currentSort = 'DATE';
-      },
-      error: (err) => console.error('Error ordering by date', err),
-    });
+    if (this.currentSort === 'DATE') {
+      this.tasks.update((tasks) => [...tasks].reverse());
+      this.isAscending = !this.isAscending;
+    } else {
+      this.taskService.getAllTasksOrderedByDate().subscribe({
+        next: (data) => {
+          this.tasks.set(data);
+          this.currentSort = 'DATE';
+          this.isAscending = true;
+          this.currentPage.set(1);
+        },
+        error: (err) => console.error('Error ordering by date', err),
+      });
+    }
   }
+
+
 
   getPriorityClass(priority: string): string {
     if (priority === 'HIGH') return 'badge-danger';

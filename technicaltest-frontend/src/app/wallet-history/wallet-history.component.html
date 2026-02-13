@@ -15,32 +15,39 @@
       </thead>
       <tbody>
         @if (transactions().length === 0) {
-          <tr>
-            <td colspan="4" class="text-center">No transactions found</td>
-          </tr>
+        <tr>
+          <td colspan="4" class="text-center">No transactions found</td>
+        </tr>
         }
-        @for (transaction of transactions(); track transaction.timestamp) {
-          <tr>
-            <td>{{ transaction.timestamp | date: 'short' }}</td>
-            <td>{{ transaction.description }}</td>
-            <td>
-              <span
-                class="font-semibold"
-                [class]="
+        @for (transaction of paginatedTransactions(); track transaction.timestamp) {
+        <tr>
+          <td>{{ transaction.timestamp | date: 'short' }}</td>
+          <td>{{ transaction.description }}</td>
+          <td>
+            <span class="font-semibold" [class]="
                   transaction.amount > 0
                     ? 'text-green-600'
                     : transaction.amount < 0
                       ? 'text-red-600'
                       : 'text-gray-500'
-                "
-              >
-                {{ transaction.amount > 0 ? '+' : '' }}{{ transaction.amount }}
-              </span>
-            </td>
-            <td class="font-semibold">{{ transaction.balanceAfter }}</td>
-          </tr>
+                ">
+              {{ transaction.amount > 0 ? '+' : '' }}{{ transaction.amount }}
+            </span>
+          </td>
+          <td class="font-semibold">{{ transaction.balanceAfter }}</td>
+        </tr>
         }
       </tbody>
     </table>
+  </div>
+
+  <div class="pagination-controls">
+    <button class="btn btn-secondary" [disabled]="currentPage() === 1" (click)="prevPage()">
+      Previous
+    </button>
+    <span>Page {{ currentPage() }} of {{ totalPages() }}</span>
+    <button class="btn btn-secondary" [disabled]="currentPage() === totalPages()" (click)="nextPage()">
+      Next
+    </button>
   </div>
 </div>

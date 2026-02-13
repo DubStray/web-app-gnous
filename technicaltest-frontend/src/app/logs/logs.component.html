@@ -3,14 +3,12 @@
     <h2>Audit Logs</h2>
     <div class="filter-container">
       <label for="eventTypeFilter">Filter by Type:</label>
-      <select
-        id="eventTypeFilter"
-        class="form-control"
-        [(ngModel)]="selectedEventType"
-        (change)="onFilterChange()"
-      >
+      <select id="eventTypeFilter" class="form-control" [(ngModel)]="selectedEventType" (change)="onFilterChange()">
+        <option [ngValue]="null">All Events</option>
         @for (eventType of eventTypes; track eventType.value) {
-          <option [value]="eventType.value">{{ eventType.label }}</option>
+        @if (eventType.value !== null) {
+        <option [ngValue]="eventType.value">{{ eventType.label }}</option>
+        }
         }
       </select>
     </div>
@@ -28,27 +26,38 @@
       </thead>
       <tbody>
         @if (logs().length === 0) {
-          <tr>
-            <td colspan="4" class="text-center">No logs found</td>
-          </tr>
+        <tr>
+          <td colspan="4" class="text-center">No logs found</td>
+        </tr>
         }
-        @for (log of logs(); track log.timestamp) {
-          <tr>
-            <td>
-              <span class="badge" [ngClass]="getEventClass(log.eventType)">
-                {{ log.eventType }}
-              </span>
-            </td>
-            <td>{{ log.timestamp | date: 'short' }}</td>
-            <td>{{ log.payload }}</td>
-            <td>
-              <span class="font-semibold" [ngClass]="getWalletDeltaClass(log.walletDelta)">
-                {{ log.walletDelta > 0 ? '+' : '' }}{{ log.walletDelta }}
-              </span>
-            </td>
-          </tr>
+        @for (log of paginatedLogs(); track log.timestamp) {
+        <tr>
+          <td>
+            <span class="badge" [ngClass]="getEventClass(log.eventType)">
+              {{ log.eventType }}
+            </span>
+          </td>
+          <!-- Con la z il browser converte nel fuso orario del pc -->
+          <td>{{ log.timestamp + 'Z' | date: 'short' }}</td>
+          <td>{{ log.payload }}</td>
+          <td>
+            <span class="font-semibold" [ngClass]="getWalletDeltaClass(log.walletDelta)">
+              {{ log.walletDelta > 0 ? '+' : '' }}{{ log.walletDelta }}
+            </span>
+          </td>
+        </tr>
         }
       </tbody>
     </table>
+  </div>
+
+  <div class="pagination-controls">
+    <button class="btn btn-secondary" [disabled]="currentPage() === 1" (click)="prevPage()">
+      Previous
+    </button>
+    <span>Page {{ currentPage() }} of {{ totalPages() }}</span>
+    <button class="btn btn-secondary" [disabled]="currentPage() === totalPages()" (click)="nextPage()">
+      Next
+    </button>
   </div>
 </div>

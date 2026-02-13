@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuditService } from '../services/audit.service';
@@ -13,6 +13,27 @@ import { AuditLog, AuditLogEventType } from '../models/models';
 })
 export class LogsComponent implements OnInit {
   logs = signal<AuditLog[]>([]);
+  currentPage = signal(1);
+  pageSize = signal(10);
+
+  paginatedLogs = computed(() => {
+    const startIndex = (this.currentPage() - 1) * this.pageSize();
+    return this.logs().slice(startIndex, startIndex + this.pageSize());
+  });
+
+  totalPages = computed(() => Math.ceil(this.logs().length / this.pageSize()));
+
+  nextPage() {
+    if (this.currentPage() < this.totalPages()) {
+      this.currentPage.update((p) => p + 1);
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage() > 1) {
+      this.currentPage.update((p) => p - 1);
+    }
+  }
   selectedEventType: AuditLogEventType | null = null;
 
   eventTypes = [
@@ -25,7 +46,7 @@ export class LogsComponent implements OnInit {
     { label: 'Wallet Debit', value: AuditLogEventType.WALLET_DEBIT },
   ];
 
-  constructor(private auditService: AuditService) {}
+  constructor(private auditService: AuditService) { }
 
   ngOnInit(): void {
     this.loadLogs();

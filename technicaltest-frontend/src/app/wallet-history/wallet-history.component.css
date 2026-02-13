@@ -84,3 +84,12 @@
 .text-gray-500 {
   color: #6b7280;
 }
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  width: 100%;
+}

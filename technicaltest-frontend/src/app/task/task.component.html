@@ -1,5 +1,5 @@
 <div class="card p-4">
-  <div class="header mb-4">
+  <div class="header mb-4 flex justify-between items-center">
     <h2>Task List</h2>
     <button class="btn btn-primary" (click)="openCreateDialog()">
       <span class="icon">+</span> New Task
@@ -15,19 +15,27 @@
           <th>Description</th>
           <th>
             Priority
-            <i class="pi pi-sort-alt cursor-pointer ml-2 hover:text-primary"
-              [class.text-primary]="currentSort === 'PRIORITY'" (click)="orderByPriority()"
-              title="Order by Priority"></i>
+            <i class="pi cursor-pointer ml-2 hover:text-primary"
+              [class.pi-sort-amount-down]="currentSort === 'PRIORITY' && isAscending"
+              [class.pi-sort-amount-up]="currentSort === 'PRIORITY' && !isAscending"
+              [class.pi-sort-alt]="currentSort !== 'PRIORITY'" [class.text-primary]="currentSort === 'PRIORITY'"
+              (click)="orderByPriority()" title="Order by Priority"></i>
           </th>
           <th>
             Status
-            <i class="pi pi-sort-alt cursor-pointer ml-2 hover:text-primary"
-              [class.text-primary]="currentSort === 'STATUS'" (click)="orderByStatus()" title="Order by Status"></i>
+            <i class="pi cursor-pointer ml-2 hover:text-primary"
+              [class.pi-sort-amount-down]="currentSort === 'STATUS' && isAscending"
+              [class.pi-sort-amount-up]="currentSort === 'STATUS' && !isAscending"
+              [class.pi-sort-alt]="currentSort !== 'STATUS'" [class.text-primary]="currentSort === 'STATUS'"
+              (click)="orderByStatus()" title="Order by Status"></i>
           </th>
           <th>
             Created At
-            <i class="pi pi-sort-alt cursor-pointer ml-2 hover:text-primary"
-              [class.text-primary]="currentSort === 'DATE'" (click)="orderByDate()" title="Order by Date"></i>
+            <i class="pi cursor-pointer ml-2 hover:text-primary"
+              [class.pi-sort-amount-down]="currentSort === 'DATE' && isAscending"
+              [class.pi-sort-amount-up]="currentSort === 'DATE' && !isAscending"
+              [class.pi-sort-alt]="currentSort !== 'DATE'" [class.text-primary]="currentSort === 'DATE'"
+              (click)="orderByDate()" title="Order by Date"></i>
           </th>
           <th>Actions</th>
         </tr>
@@ -38,7 +46,7 @@
           <td colspan="7" class="text-center">No tasks found</td>
         </tr>
         }
-        @for (task of tasks(); track task.id) {
+        @for (task of paginatedTasks(); track task.id) {
         <tr>
           <td>{{ task.id }}</td>
           <td class="font-bold">{{ task.title }}</td>
@@ -53,7 +61,8 @@
               {{ task.status }}
             </span>
           </td>
-          <td>{{ task.createdAt | date: 'short' }}</td>
+          <!-- Con la z il browser converte nel fuso orario del pc -->
+          <td>{{ task.createdAt + 'Z' | date: 'short' }}</td>
           <td>
             <div class="action-buttons">
               <button class="btn btn-sm btn-warning" (click)="openStatusDialog(task)">
@@ -67,6 +76,16 @@
         }
       </tbody>
     </table>
+  </div>
+
+  <div class="pagination-controls">
+    <button class="btn btn-secondary" [disabled]="currentPage() === 1" (click)="prevPage()">
+      Previous
+    </button>
+    <span>Page {{ currentPage() }} of {{ totalPages() }}</span>
+    <button class="btn btn-secondary" [disabled]="currentPage() === totalPages()" (click)="nextPage()">
+      Next
+    </button>
   </div>
 </div>
 

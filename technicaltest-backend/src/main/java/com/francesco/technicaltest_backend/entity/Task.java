@@ -61,6 +61,9 @@ public class Task {
     @Enumerated(EnumType.STRING)
     private TaskPriority priority = TaskPriority.MEDIUM;
 
+    @Column(name = "reward_claimed", nullable = false)
+    private Boolean rewardClaimed = false;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
     private LocalDateTime createdAt;

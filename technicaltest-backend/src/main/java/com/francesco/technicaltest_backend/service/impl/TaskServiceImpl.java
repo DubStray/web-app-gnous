@@ -34,8 +34,8 @@ public class TaskServiceImpl implements TaskService {
     private final WalletService walletService;
     private final AuditLogService auditLogService;
 
-    public TaskServiceImpl(TaskRepository taskRepository, TaskMapper taskMapper, 
-                          WalletService walletService, AuditLogService auditLogService) {
+    public TaskServiceImpl(TaskRepository taskRepository, TaskMapper taskMapper,
+            WalletService walletService, AuditLogService auditLogService) {
         this.taskRepository = taskRepository;
         this.taskMapper = taskMapper;
         this.walletService = walletService;
@@ -65,31 +65,30 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskDTO getTaskById(Long id) {
         return this.taskRepository.findById(id)
-            .map(this.taskMapper::toTaskDTO)
-            .orElseThrow(() -> new TaskNotFoundException(id));
+                .map(this.taskMapper::toTaskDTO)
+                .orElseThrow(() -> new TaskNotFoundException(id));
     }
 
     @Override
     public TaskDTO createTask(CreateTaskDTO createTaskDTO) {
-        //Crea il task e lo salva
+        // Crea il task e lo salva
         Task task = this.taskMapper.toEntity(createTaskDTO);
         Task savedTask = this.taskRepository.save(task);
-        
+
         // Scala 1 credito dal wallet
         // Se fallisce, @Transactional farà rollback anche della creazione del task
         walletService.debit(walletService.getTaskCost(), savedTask, "Task creation: " + savedTask.getTitle());
-        
+
         // Registra l'evento di audit
         auditLogService.logEvent(
-            AuditLogEventType.TASK_CREATED, 
-            "TASK [CREATED]: " + savedTask.getTitle() +
-            " -- PRIORITY: " + savedTask.getPriority() +
-            " -- DESCRIPTION: " + savedTask.getDescription() +
-            " -- STATUS: " + savedTask.getStatus(),
-            savedTask, 
-            0
-        );
-        
+                AuditLogEventType.TASK_CREATED,
+                "TASK [CREATED]: " + savedTask.getTitle() +
+                        " -- PRIORITY: " + savedTask.getPriority() +
+                        " -- DESCRIPTION: " + savedTask.getDescription() +
+                        " -- STATUS: " + savedTask.getStatus(),
+                savedTask,
+                0);
+
         return this.taskMapper.toTaskDTO(savedTask);
     }
 
@@ -102,13 +101,13 @@ public class TaskServiceImpl implements TaskService {
         TaskDTO updatedTask = this.taskMapper.toTaskDTO(this.taskRepository.save(task));
 
         auditLogService.logEvent(
-            AuditLogEventType.TASK_UPDATED, 
-            "TASK [UPDATED]: " + updatedTask.getTitle() +
-            " -- STATUS: " + updatedTask.getStatus() +
-            " -- PRIORITY: " + updatedTask.getPriority() +
-            " -- DESCRIPTION: " + updatedTask.getDescription(),
-            task, 
-            0);
+                AuditLogEventType.TASK_UPDATED,
+                "TASK [UPDATED]: " + updatedTask.getTitle() +
+                        " -- STATUS: " + updatedTask.getStatus() +
+                        " -- PRIORITY: " + updatedTask.getPriority() +
+                        " -- DESCRIPTION: " + updatedTask.getDescription(),
+                task,
+                0);
 
         return updatedTask;
     }
@@ -120,47 +119,55 @@ public class TaskServiceImpl implements TaskService {
         TaskStatus oldStatus = task.getStatus();
         this.taskMapper.updateTaskStatusFromDTO(updateTaskStatusDTO, task);
 
+        boolean rewardTriggered = false;
+        if (task.getStatus() == TaskStatus.DONE && oldStatus != TaskStatus.DONE
+                && !Boolean.TRUE.equals(task.getRewardClaimed())) {
+            task.setRewardClaimed(true);
+            rewardTriggered = true;
+        }
+
         TaskDTO updatedTask = this.taskMapper.toTaskDTO(this.taskRepository.save(task));
 
-        if (updatedTask.getStatus() == TaskStatus.DONE && oldStatus != TaskStatus.DONE) {
+        if (rewardTriggered) {
             walletService.credit(2, task, "Completed Task: " + updatedTask.getTitle());
 
             auditLogService.logEvent(
-                AuditLogEventType.WALLET_CREDIT, 
-                "TASK [COMPLETED]: " + updatedTask.getTitle(), 
-                task, 
-                2);
+                    AuditLogEventType.WALLET_CREDIT,
+                    "TASK [COMPLETED]: " + updatedTask.getTitle(),
+                    task,
+                    2);
         }
 
         auditLogService.logEvent(
-            AuditLogEventType.TASK_STATUS_CHANGED, 
-            "TASK [STATUS CHANGED]: " + updatedTask.getStatus() +
-            " -- OLD STATUS: " + oldStatus,
-            task, 
-            0);
+                AuditLogEventType.TASK_STATUS_CHANGED,
+                "TASK [STATUS CHANGED]: " + updatedTask.getStatus() +
+                        " -- OLD STATUS: " + oldStatus,
+                task,
+                0);
 
         return updatedTask;
     }
 
     @Override
     public void deleteTask(Long id) {
-        Task task =  this.taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+        Task task = this.taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
 
         // Sgancia i log associati prima della cancellazione fisica
         auditLogService.detachFromTask(task);
         walletService.detachFromTask(task);
 
         if (task.getStatus() != TaskStatus.DONE) {
-            walletService.credit(walletService.getTaskDeletionRefund(), null, "Refund for task deletion: " + task.getTitle());
+            walletService.credit(walletService.getTaskDeletionRefund(), null,
+                    "Refund for task deletion: " + task.getTitle());
         }
 
         this.taskRepository.delete(task);
 
         auditLogService.logEvent(
-            AuditLogEventType.TASK_DELETED, 
-            "TASK [DELETED]: " + task.getTitle(), 
-            null, 
-            1);
+                AuditLogEventType.TASK_DELETED,
+                "TASK [DELETED]: " + task.getTitle(),
+                null,
+                1);
     }
 
 }

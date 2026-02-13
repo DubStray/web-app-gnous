@@ -1,10 +1,10 @@
 spring.application.name=technicaltest-backend
 
 # Database Connection
-# Replace placeholders with your actual database configuration
-spring.datasource.url=jdbc:postgresql://<DB_HOST>:<DB_PORT>/<DB_NAME>
-spring.datasource.username=<DB_USERNAME>
-spring.datasource.password=<DB_PASSWORD>
+# Valori di default
+spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/gnous_test_db}
+spring.datasource.username=${SPRING_DATASOURCE_USERNAME:postgres}
+spring.datasource.password=${SPRING_DATASOURCE_PASSWORD:postgres}
 spring.datasource.driver-class-name=org.postgresql.Driver
 
 # JPA / Hibernate

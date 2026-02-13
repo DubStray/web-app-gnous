@@ -20,11 +20,10 @@ Il progetto è diviso in due moduli principali:
 
 ## Prerequisiti
 
-Assicurarsi di avere installato::
+Assicurati di avere installato:
 
-- **Docker & Docker Compose** (Per il database e backend)
-- **Java 21** (Per il backend)
-- **Node.js** e **npm** (Per il frontend)
+- **Docker & Docker Compose** (Per avviare backend e DB)
+- **Node.js** e **npm** (Per avviare il frontend)
 
 ---
 
@@ -42,7 +41,14 @@ Questo metodo avvia sia il database PostgreSQL che il servizio Backend in contai
    cd technicaltest-backend
    ```
 
-2. Avvia i container:
+2. **Configurazione Iniziale**:
+   Prima di avviare, verifica la configurazione nell'`application.properties.example` e rinominalo (o copialo) in `application.properties` per avere i valori di default senza modificare nulla:
+
+   ```bash
+   cp src/main/resources/application.properties.example src/main/resources/application.properties
+   ```
+
+3. Avvia i container:
 
    ```bash
    docker compose up --build

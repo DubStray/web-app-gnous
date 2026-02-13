@@ -16,6 +16,18 @@ export class TaskService {
     return this.http.get<Task[]>(`${this.apiUrl}/all`);
   }
 
+  getTasksByStatus(): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.apiUrl}/ordered-by-status`);
+  }
+
+  getTasksByPriority(): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.apiUrl}/ordered-by-priority`);
+  }
+
+  getTasksByDate(): Observable<Task[]> {
+    return this.http.get<Task[]>(`${this.apiUrl}/ordered-by-date`);
+  }
+
   getTaskById(id: number): Observable<Task> {
     return this.http.get<Task>(`${this.apiUrl}/${id}`);
   }

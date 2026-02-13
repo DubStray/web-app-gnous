@@ -45,12 +45,45 @@ export class TaskComponent implements OnInit {
     this.loadTasks();
   }
 
+  currentSort: 'STATUS' | 'PRIORITY' | 'DATE' | null = null;
+
   loadTasks() {
     this.taskService.getAllTasks().subscribe({
       next: (data) => {
         this.tasks.set(data);
+        this.currentSort = null;
       },
       error: (err) => console.error('Error loading tasks', err),
+    });
+  }
+
+  orderByStatus() {
+    this.taskService.getTasksByStatus().subscribe({
+      next: (data) => {
+        this.tasks.set(data);
+        this.currentSort = 'STATUS';
+      },
+      error: (err) => console.error('Error ordering by status', err),
+    });
+  }
+
+  orderByPriority() {
+    this.taskService.getTasksByPriority().subscribe({
+      next: (data) => {
+        this.tasks.set(data);
+        this.currentSort = 'PRIORITY';
+      },
+      error: (err) => console.error('Error ordering by priority', err),
+    });
+  }
+
+  orderByDate() {
+    this.taskService.getTasksByDate().subscribe({
+      next: (data) => {
+        this.tasks.set(data);
+        this.currentSort = 'DATE';
+      },
+      error: (err) => console.error('Error ordering by date', err),
     });
   }
 

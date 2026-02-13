@@ -13,15 +13,40 @@
           <th>ID</th>
           <th>Title</th>
           <th>Description</th>
-          <th>Priority</th>
-          <th>Status</th>
+          <th>
+            Priority
+            <i
+              class="pi pi-sort-alt cursor-pointer ml-2 hover:text-primary"
+              [class.text-primary]="currentSort === 'PRIORITY'"
+              (click)="orderByPriority()"
+              title="Order by Priority"
+            ></i>
+          </th>
+          <th>
+            Status
+            <i
+              class="pi pi-sort-alt cursor-pointer ml-2 hover:text-primary"
+              [class.text-primary]="currentSort === 'STATUS'"
+              (click)="orderByStatus()"
+              title="Order by Status"
+            ></i>
+          </th>
+          <th>
+            Created At
+            <i
+              class="pi pi-sort-alt cursor-pointer ml-2 hover:text-primary"
+              [class.text-primary]="currentSort === 'DATE'"
+              (click)="orderByDate()"
+              title="Order by Date"
+            ></i>
+          </th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         @if (tasks().length === 0) {
           <tr>
-            <td colspan="6" class="text-center">No tasks found</td>
+            <td colspan="7" class="text-center">No tasks found</td>
           </tr>
         }
         @for (task of tasks(); track task.id) {
@@ -39,6 +64,7 @@
                 {{ task.status }}
               </span>
             </td>
+            <td>{{ task.createdAt | date: 'short' }}</td>
             <td>
               <div class="action-buttons">
                 <button class="btn btn-sm btn-warning" (click)="openStatusDialog(task)">

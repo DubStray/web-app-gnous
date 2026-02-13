@@ -144,11 +144,24 @@ export class TaskComponent implements OnInit {
     });
   }
 
-  deleteTask(task: Task) {
+  deleteDialogVisible = signal(false);
+  taskToDelete = signal<Task | null>(null);
+
+  openDeleteDialog(task: Task) {
+    this.taskToDelete.set(task);
+    this.deleteDialogVisible.set(true);
+  }
+
+  confirmDelete() {
+    const task = this.taskToDelete();
+    if (!task) return;
+
     this.taskService.deleteTask(task.id).subscribe({
       next: () => {
         this.loadTasks();
         this.walletService.refreshBalance();
+        this.deleteDialogVisible.set(false);
+        this.taskToDelete.set(null);
       },
       error: (err) => console.error('Error deleting task', err),
     });

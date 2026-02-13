@@ -17,6 +17,12 @@ public interface TaskService {
 
     TaskDTO getTaskById(Long id);
 
+    List<TaskDTO> getAllTasksOrderedByStatus();
+
+    List<TaskDTO> getAllTasksOrderedByPriority();
+
+    List<TaskDTO> getAllTasksOrderedByDate();
+
     TaskDTO createTask(CreateTaskDTO createTaskDTO);
 
     TaskDTO updateTask(Long id, UpdateTaskDTO updateTaskDTO);

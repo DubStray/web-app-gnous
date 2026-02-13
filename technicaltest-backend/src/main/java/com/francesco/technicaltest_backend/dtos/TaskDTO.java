@@ -1,5 +1,7 @@
 package com.francesco.technicaltest_backend.dtos;
 
+import java.time.LocalDateTime;
+
 import com.francesco.technicaltest_backend.entity.enums.TaskPriority;
 import com.francesco.technicaltest_backend.entity.enums.TaskStatus;
 
@@ -17,4 +19,5 @@ public class TaskDTO {
     private String description;
     private TaskStatus status;
     private TaskPriority priority;
+    private LocalDateTime createdAt;
 }

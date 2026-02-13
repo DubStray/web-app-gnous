@@ -48,6 +48,21 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public List<TaskDTO> getAllTasksOrderedByStatus() {
+        return this.taskMapper.toTaskDTOList(this.taskRepository.orderTaskByStatus());
+    }
+
+    @Override
+    public List<TaskDTO> getAllTasksOrderedByPriority() {
+        return this.taskMapper.toTaskDTOList(this.taskRepository.orderTaskByPriority());
+    }
+
+    @Override
+    public List<TaskDTO> getAllTasksOrderedByDate() {
+        return this.taskMapper.toTaskDTOList(this.taskRepository.orderTaskByDate());
+    }
+
+    @Override
     public TaskDTO getTaskById(Long id) {
         return this.taskRepository.findById(id)
             .map(this.taskMapper::toTaskDTO)

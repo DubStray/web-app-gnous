@@ -40,6 +40,21 @@ public class TaskController {
         return ResponseEntity.ok(this.taskService.getAllTasks());
     }
 
+    @GetMapping("/ordered-by-status")
+    public ResponseEntity<List<TaskDTO>> getAllTasksOrderedByStatus() {
+        return ResponseEntity.ok(this.taskService.getAllTasksOrderedByStatus());
+    }
+
+    @GetMapping("/ordered-by-priority")
+    public ResponseEntity<List<TaskDTO>> getAllTasksOrderedByPriority() {
+        return ResponseEntity.ok(this.taskService.getAllTasksOrderedByPriority());
+    }
+
+    @GetMapping("/ordered-by-date")
+    public ResponseEntity<List<TaskDTO>> getAllTasksOrderedByDate() {
+        return ResponseEntity.ok(this.taskService.getAllTasksOrderedByDate());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id) {
         return ResponseEntity.ok(this.taskService.getTaskById(id));

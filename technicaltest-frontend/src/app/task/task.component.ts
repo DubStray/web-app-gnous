@@ -1,14 +1,18 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Observable } from 'rxjs';
 import { TaskService } from '../services/task.service';
 import { WalletService } from '../services/wallet.service';
 import { Task, TaskStatus, UpdateTaskStatus, UpdateTask, TaskPriority } from '../models/models';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-task',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ToastModule],
+  providers: [MessageService],
   templateUrl: './task.component.html',
   styleUrl: './task.component.css',
 })
@@ -45,7 +49,12 @@ export class TaskComponent implements OnInit {
   newStatus: TaskStatus = TaskStatus.TODO;
 
   createDialogVisible = signal(false);
-  newTask: any = { title: '', description: '', status: TaskStatus.TODO, priority: 'MEDIUM' };
+  newTask: { title: string; description: string; status: TaskStatus; priority: TaskPriority } = {
+    title: '',
+    description: '',
+    status: TaskStatus.TODO,
+    priority: TaskPriority.MEDIUM,
+  };
 
   statusOptions = [
     { label: 'TODO', value: TaskStatus.TODO },
@@ -61,9 +70,25 @@ export class TaskComponent implements OnInit {
 
   private taskService = inject(TaskService);
   private walletService = inject(WalletService);
+  private messageService = inject(MessageService);
 
   ngOnInit() {
     this.loadTasks();
+  }
+
+  openCreateDialog() {
+    console.log('Current balance:', this.walletService.balance());
+    if (this.walletService.balance() <= 0) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Insufficient Funds',
+        detail: 'You need at least 1 credit to create a task.',
+        life: 3000,
+      });
+      return;
+    }
+    this.newTask = { title: '', description: '', status: TaskStatus.TODO, priority: TaskPriority.MEDIUM };
+    this.createDialogVisible.set(true);
   }
 
   currentSort: 'STATUS' | 'PRIORITY' | 'DATE' | null = null;
@@ -80,55 +105,33 @@ export class TaskComponent implements OnInit {
     });
   }
 
-  orderByStatus() {
-    if (this.currentSort === 'STATUS') {
+  private sortTasks(type: 'STATUS' | 'PRIORITY' | 'DATE', source$: Observable<Task[]>) {
+    if (this.currentSort === type) {
       this.tasks.update((tasks) => [...tasks].reverse());
       this.isAscending = !this.isAscending;
     } else {
-      this.taskService.getAllTasksOrderedByStatus().subscribe({
+      source$.subscribe({
         next: (data) => {
           this.tasks.set(data);
-          this.currentSort = 'STATUS';
+          this.currentSort = type;
           this.isAscending = true;
           this.currentPage.set(1);
         },
-        error: (err) => console.error('Error ordering by status', err),
+        error: (err) => console.error(`Error ordering by ${type}`, err),
       });
     }
+  }
+
+  orderByStatus() {
+    this.sortTasks('STATUS', this.taskService.getTasksByStatus());
   }
 
   orderByPriority() {
-    if (this.currentSort === 'PRIORITY') {
-      this.tasks.update((tasks) => [...tasks].reverse());
-      this.isAscending = !this.isAscending;
-    } else {
-      this.taskService.getAllTasksOrderedByPriority().subscribe({
-        next: (data) => {
-          this.tasks.set(data);
-          this.currentSort = 'PRIORITY';
-          this.isAscending = true;
-          this.currentPage.set(1);
-        },
-        error: (err) => console.error('Error ordering by priority', err),
-      });
-    }
+    this.sortTasks('PRIORITY', this.taskService.getTasksByPriority());
   }
 
   orderByDate() {
-    if (this.currentSort === 'DATE') {
-      this.tasks.update((tasks) => [...tasks].reverse());
-      this.isAscending = !this.isAscending;
-    } else {
-      this.taskService.getAllTasksOrderedByDate().subscribe({
-        next: (data) => {
-          this.tasks.set(data);
-          this.currentSort = 'DATE';
-          this.isAscending = true;
-          this.currentPage.set(1);
-        },
-        error: (err) => console.error('Error ordering by date', err),
-      });
-    }
+    this.sortTasks('DATE', this.taskService.getTasksByDate());
   }
 
 
@@ -213,10 +216,7 @@ export class TaskComponent implements OnInit {
     });
   }
 
-  openCreateDialog() {
-    this.newTask = { title: '', description: '', status: TaskStatus.TODO, priority: 'MEDIUM' };
-    this.createDialogVisible.set(true);
-  }
+
 
   saveNewTask() {
     this.taskService.createTask(this.newTask).subscribe({
